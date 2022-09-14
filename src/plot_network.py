@@ -31,7 +31,7 @@ print(width,height)
 
 
 metrics = ['degree', 'betweenness', 'strength', 'betweenness_weight', 'closeness_weight', 'vulnerability_weight']
-#metrics = ['betweenness_weight']
+metrics = ['betweenness_weight', 'closeness_weight']
 
 for metric in metrics:
 	# Metrics
@@ -47,12 +47,10 @@ for metric in metrics:
 	node_size = np.array(df['metric'])
 	max_size = max(node_size)
 	min_size = min(node_size)
-
 	# Min and max plot sizes
 	T_min = 8
 	T_max = 25
 	node_size = T_min + ( (node_size - min_size) / (max_size - min_size) ) * (T_max - T_min) # normalization
-
 	g.vs["size"] = node_size.tolist()
 	'''
 
@@ -68,18 +66,21 @@ for metric in metrics:
 		layout.append((g.vs[i]["xcoord"],-g.vs[i]["ycoord"]))
 
 		# keep only the names of the biggest cities and color them differently
-		if(g.vs[i]["label"] != "Shanghai" and 
+		'''if(g.vs[i]["label"] != "Shanghai" and 
 		   g.vs[i]["label"] != "Beijing" and
  		   g.vs[i]["label"] != "Guangzhou" and
 		   g.vs[i]["label"] != "Chengdu" and
 		   g.vs[i]["label"] != "Chongqing" and
-		   g.vs[i]["label"] != "Wuhan"):
+		   g.vs[i]["label"] != "Wuhan"):'''
+
+		# Good for closeness
+		if(g.vs[i]["label"] != "Wuhan" and g.vs[i]["label"] != "Beijing"): # and g.vs[i]["label"] != "Shiyan"):
 
 			g.vs[i]["label"] = ""
 			g.vs[i]["vertex_shape"] = "circle"
 		else:
 			g.vs[i]["vertex_shape"] = "triangle"
-			g.vs[i]["size"] = 20	
+			g.vs[i]["size"] = 25	
 		
 
 
@@ -134,7 +135,7 @@ for metric in metrics:
 	g.es["color"] = [cmap2(w) for w in g.es['weight_plt']]
 
 	g.es['weight_plt'] = ig.rescale(g.es['weight'], (0.005,0.11))
-	g.es["edge_width"] = [w*10 for w in g.es['weight_plt']]
+	g.es["edge_width"] = [w**(1.5) * 150 for w in g.es['weight_plt']]
 
 
 	visual_style = {
@@ -142,6 +143,7 @@ for metric in metrics:
 		"vertex_shape": g.vs["vertex_shape"],
 		"vertex_label_size": 20,
 		"vertex_label_dist": 1,
+		"vertex_label_color": "white",
 		"edge_width": g.es['edge_width'],
 		"layout": layout,
 		"bbox": (width, height),
@@ -155,14 +157,23 @@ for metric in metrics:
 	fig, axs = plt.subplots(
 		3, 1,
 		figsize=(7, 6),
-		gridspec_kw=dict(height_ratios=(15, 1, 1)),
+		gridspec_kw=dict(height_ratios=(15, 1, 1)
 	)
-
 	norm1 = ScalarMappable(norm=Normalize(min(g.vs[metric]), max(g.vs[metric])), cmap=cmap1)
 	norm2 = ScalarMappable(norm=Normalize(min(g.es['weight']), max(g.es['weight'])), cmap=cmap2)
 	plt.colorbar(norm1, cax=axs[1], orientation="horizontal", label='Vertex Betweenness')
 	plt.colorbar(norm2, cax=axs[2], orientation="horizontal", label='Edge Betweenness')
 	'''
 
-	ig.plot(g, '../results/network_' + net_name + '_' + metric + '.png', **visual_style)
+	'''fig, axs = plt.subplots(
+		3, 1,
+		figsize=(7, 6),
+		gridspec_kw=dict(height_ratios=(15, 1, 1)),
+	)
 
+	norm1 = ScalarMappable(norm=Normalize(min(g.vs[metric]), max(g.vs[metric])), cmap=cmap1)
+	norm2 = ScalarMappable(norm=Normalize(min(g.es['weight']), max(g.es['weight'])), cmap=cmap2)
+	plt.colorbar(norm1, orientation="horizontal", label='Vertex Betweenness')
+	#plt.colorbar(norm2, cax=axs[2], orientation="horizontal", label='Edge Betweenness')'''
+
+	ig.plot(g, '../results/network_' + net_name + '_' + metric + '.png', **visual_style)

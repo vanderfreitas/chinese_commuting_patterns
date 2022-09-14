@@ -96,11 +96,6 @@ for axind in range(2):
 
 
 
-
-	# https://igraph.org/python/tutorial/develop/tutorials/betweenness/betweenness.html
-	# ig.rescale
-
-
 	# Normalizing metrics, considering the entire period (01/jan to 29/fev)
 	for c in range(len(metrics)):
 		print(metrics[c] + ': ' + str(np.min(time_series_metrics[:,c])) + ' , ' + str(np.max(time_series_metrics[:,c])) )
@@ -116,17 +111,7 @@ for axind in range(2):
 
 	metric_index = 0
 	for m in metrics:	
-		#if metric_index < 4:
-		#	ax[0].plot(np.linspace(1,len(path_directories),len(path_directories)), time_series_metrics[:,metric_index], color=colors[metric_index], lw=2, label=lbls[metric_index], linestyle='--', zorder=2)
-		#else:
-
 		ax[axind].plot(np.linspace(1,len(path_directories),len(path_directories)), time_series_metrics[:,metric_index], color=colors[metric_index], lw=2, label=lbls[metric_index], zorder=2, marker=markers[metric_index])
-
-
-		#ax[0].plot(np.linspace(1,len(path_directories),len(path_directories)), time_series_metrics[:,metric_index]+time_series_metrics_std[:,metric_index], 
-		#	color=colors[metric_index], lw=2, zorder=2, alpha=0.5)
-		#ax[0].plot(np.linspace(1,len(path_directories),len(path_directories)), time_series_metrics[:,metric_index]-time_series_metrics_std[:,metric_index], 
-		#	color=colors[metric_index], lw=2, zorder=2, alpha=0.5)
 
 		metric_index += 1
 
@@ -163,7 +148,7 @@ for axind in range(2):
 
 	# converting the names into dates: dd-mm
 	for i in range(len(path_directories)):
-		aux_date = path_directories[i][13:] # only ddmm
+		aux_date = path_directories[i][14:] # only ddmm
 		month = 'jan' if aux_date[:2]=='01' else 'feb'
 		path_directories[i] = aux_date[2:] + '-' + month
 
@@ -174,11 +159,8 @@ for axind in range(2):
 	ax[axind].set_xlim([1,60])
 	ax[axind].set_ylim([-0.05,1.2])
 	ax[axind].set_xticks([])
-
+	plt.xticks(ticks=np.linspace(1,60,60), labels=path_directories, fontsize=12, rotation=90)
 	ax[axind].set_ylabel('Normalized metrics')
-
-
-
 
 
 
@@ -192,7 +174,7 @@ ax[1].text(0.0, 0.97, 'b) Outflows', transform=ax[1].transAxes + trans, fontsize
 
 plt.tight_layout()
 
-fig.savefig(root_path + 'time_series_metrics_and_strength_big_cities.png', dpi=300)
-fig.savefig(root_path + 'time_series_metrics_and_strength_big_cities.pdf', dpi=300)
-fig.savefig(root_path + 'time_series_metrics_and_strength_big_cities.png', dpi=300)
-fig.savefig(root_path + 'time_series_metrics_and_strength_big_cities.pdf', dpi=300)
+fig.savefig(root_path + 'time_series_metrics.png', dpi=300)
+fig.savefig(root_path + 'time_series_metrics.pdf', dpi=300)
+fig.savefig(root_path + 'time_series_metrics.png', dpi=300)
+fig.savefig(root_path + 'time_series_metrics.pdf', dpi=300)
